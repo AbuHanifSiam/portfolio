@@ -1690,12 +1690,14 @@ img {
   }
 
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(210px, 0.85fr);
+    grid-template-columns: 1fr;
     grid-template-areas:
-      'intro photo'
-      'body photo';
-    align-items: end;
-    gap: 1.8rem 1.25rem;
+      'intro'
+      'photo'
+      'body';
+    justify-items: center;
+    align-items: center;
+    gap: 1.5rem;
   }
 
   .projects-grid {
@@ -1708,17 +1710,44 @@ img {
   }
 
   .hero-photo-card {
-    justify-self: end;
-    width: min(100%, 320px);
-    min-height: 21rem;
+    justify-self: center;
+    width: min(100%, 300px);
+    min-height: 20rem;
   }
 
   .hero-copy {
     max-width: 100%;
+    width: 100%;
+    text-align: center;
   }
 
   .hero-copy h1 {
     font-size: clamp(2.1rem, 8vw, 3.7rem);
+  }
+
+  .hero-intro-block,
+  .hero-body-block {
+    width: 100%;
+    text-align: center;
+  }
+
+  .hero-body-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lede {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-social-links {
+    justify-content: center;
   }
 
   .timeline-list {
@@ -1784,12 +1813,11 @@ img {
   }
 
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(132px, 40vw);
     grid-template-areas:
-      'intro photo'
-      'body body';
-    align-items: start;
-    gap: 1.15rem 0.9rem;
+      'intro'
+      'photo'
+      'body';
+    gap: 1.15rem;
   }
 
   .hero-intro {
@@ -1813,13 +1841,12 @@ img {
   }
 
   .hero-photo-card {
-    width: clamp(138px, 34vw, 210px);
-    min-height: clamp(12rem, 30vw, 15rem);
-    justify-self: end;
+    width: clamp(138px, 62vw, 210px);
+    min-height: clamp(12rem, 52vw, 15rem);
   }
 
   .hero-photo-frame {
-    height: clamp(10.8rem, 28vw, 13rem);
+    height: clamp(10.8rem, 46vw, 13rem);
     border-width: 6px;
   }
 
@@ -1979,8 +2006,8 @@ img {
   }
 
   .hero-photo-card {
-    width: clamp(122px, 37vw, 170px);
-    min-height: clamp(10rem, 31vw, 12rem);
+    width: clamp(122px, 64vw, 170px);
+    min-height: clamp(10rem, 54vw, 12rem);
   }
 
   .hero-intro {
@@ -1994,7 +2021,7 @@ img {
   }
 
   .hero-photo-frame {
-    height: clamp(9.3rem, 29vw, 10.8rem);
+    height: clamp(9.3rem, 49vw, 10.8rem);
   }
 
   .contact-feature h3 {
