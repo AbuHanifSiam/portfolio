@@ -1139,6 +1139,7 @@ img {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 6rem;
+  align-items: start;
 }
 
 .timeline-intro p {
@@ -1150,16 +1151,19 @@ img {
 }
 
 .timeline-list {
+  --timeline-rail-offset: 3rem;
+  --timeline-rail-x: 0.45rem;
+  --timeline-node-size: 1rem;
   position: relative;
   display: grid;
   gap: 6rem;
-  padding-left: 3rem;
+  padding-left: var(--timeline-rail-offset);
 }
 
 .timeline-list::before {
   content: '';
   position: absolute;
-  left: 0.45rem;
+  left: var(--timeline-rail-x);
   top: 0.6rem;
   bottom: 0.6rem;
   width: 2px;
@@ -1177,10 +1181,10 @@ img {
 
 .timeline-node {
   position: absolute;
-  left: -3.05rem;
+  left: calc((var(--timeline-rail-offset) - var(--timeline-node-size)) * -1 - 0.05rem);
   top: 0.5rem;
-  width: 1rem;
-  height: 1rem;
+  width: var(--timeline-node-size);
+  height: var(--timeline-node-size);
   border: 2px solid #444656;
   border-radius: 50%;
   background: #39393a;
@@ -1200,13 +1204,16 @@ img {
 .timeline-head h3 {
   margin: 0.45rem 0 0;
   font-family: 'Inter', sans-serif;
-  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-size: clamp(1.5rem, 2.6vw, 2.35rem);
   font-weight: 800;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
 .timeline-role {
   margin: 0.25rem 0 0;
   color: var(--text-soft);
+  overflow-wrap: anywhere;
 }
 
 .timeline-item ul {
@@ -1224,6 +1231,7 @@ img {
   align-items: start;
   color: var(--text-soft);
   line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .timeline-item li svg {
@@ -1751,7 +1759,11 @@ img {
   }
 
   .timeline-list {
-    padding-left: 2.5rem;
+    --timeline-rail-offset: 2.5rem;
+  }
+
+  .timeline-intro p {
+    max-width: none;
   }
 
   .supporting-credentials {
@@ -1780,7 +1792,13 @@ img {
   }
 
   .timeline-list {
+    --timeline-rail-offset: 2.2rem;
+    --timeline-rail-x: 0.35rem;
     gap: 2.5rem;
+  }
+
+  .timeline-head h3 {
+    font-size: clamp(1.35rem, 5vw, 1.8rem);
   }
 
   .hero-actions {
@@ -1921,16 +1939,12 @@ img {
   }
 
   .timeline-list {
-    padding-left: 2rem;
+    --timeline-rail-offset: 2rem;
     gap: 3rem;
   }
 
-  .timeline-list::before {
-    left: 0.35rem;
-  }
-
-  .timeline-node {
-    left: -2.55rem;
+  .timeline-head h3 {
+    font-size: clamp(1.25rem, 6.3vw, 1.55rem);
   }
 
   .credential-mini-row {
@@ -2053,12 +2067,13 @@ img {
   }
 
   .timeline-list {
-    padding-left: 1.5rem;
+    --timeline-rail-offset: 1.5rem;
+    --timeline-rail-x: 0.25rem;
     gap: 2.2rem;
   }
 
-  .timeline-node {
-    left: -2rem;
+  .timeline-head h3 {
+    font-size: clamp(1.1rem, 6.7vw, 1.35rem);
   }
 
   .button {
@@ -2093,11 +2108,8 @@ img {
   }
 
   .timeline-list {
-    padding-left: 1.15rem;
-  }
-
-  .timeline-node {
-    left: -1.6rem;
+    --timeline-rail-offset: 1.15rem;
+    --timeline-node-size: 0.9rem;
   }
 }
 
