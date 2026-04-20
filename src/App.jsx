@@ -380,22 +380,11 @@ function App() {
       <section className="hero-section">
         <div className="hero-radial" />
         <div className="container hero-grid">
-          <div className="hero-copy">
+          <div className="hero-copy hero-intro-block">
             <p className="eyebrow hero-intro">
               <span>Hi, I&apos;m</span>
               <br />
               <span>Md. Abu Hanif Siam</span>
-            </p>
-            <h1>
-              <span className="accent-text typing-text">
-                {displayedText}
-                <span className="typing-cursor" />
-              </span>
-            </h1>
-            <p className="lede">
-              Application and IT Services Analyst with experience supporting
-              digital applications and driving operational excellence through
-              agile methodologies and technical precision.
             </p>
           </div>
 
@@ -412,37 +401,50 @@ function App() {
             <div className="hero-photo-glow" />
           </div>
 
-          <div className="hero-actions">
-            <a className="button button-primary" href="#projects">
-              Explore Work
-            </a>
-            <a
-              className="button button-secondary"
-              href={withBasePath('/Md.AbuHanifSiam_CV.pdf')}
-              target="_blank"
-              rel="noreferrer"
-            >
-              View Resume
-            </a>
-            <div className="hero-social-links" aria-label="Social links">
-              <a
-                className="button button-secondary button-social"
-                href="https://www.linkedin.com/in/ahsiam11"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Open LinkedIn"
-              >
-                <img src={withBasePath('/assets/linkedin.png')} alt="LinkedIn" />
+          <div className="hero-copy hero-body-block">
+            <h1>
+              <span className="accent-text typing-text">
+                {displayedText}
+                <span className="typing-cursor" />
+              </span>
+            </h1>
+            <p className="lede">
+              Application and IT Services Analyst with experience supporting
+              digital applications and driving operational excellence through
+              agile methodologies and technical precision.
+            </p>
+            <div className="hero-actions">
+              <a className="button button-primary" href="#projects">
+                Explore Work
               </a>
               <a
-                className="button button-secondary button-social"
-                href="https://github.com/AbuHanifSiam"
+                className="button button-secondary"
+                href={withBasePath('/Md.AbuHanifSiam_CV.pdf')}
                 target="_blank"
                 rel="noreferrer"
-                aria-label="Open GitHub"
               >
-                <img src={withBasePath('/assets/github.png')} alt="GitHub" />
+                View Resume
               </a>
+              <div className="hero-social-links" aria-label="Social links">
+                <a
+                  className="button button-secondary button-social"
+                  href="https://www.linkedin.com/in/ahsiam11"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Open LinkedIn"
+                >
+                  <img src={withBasePath('/assets/linkedin.png')} alt="LinkedIn" />
+                </a>
+                <a
+                  className="button button-secondary button-social"
+                  href="https://github.com/AbuHanifSiam"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Open GitHub"
+                >
+                  <img src={withBasePath('/assets/github.png')} alt="GitHub" />
+                </a>
+              </div>
             </div>
           </div>
         </div>
