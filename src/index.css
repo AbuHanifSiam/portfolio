@@ -1805,7 +1805,7 @@ img {
   }
 
   .container {
-    width: min(calc(100% - 24px), var(--container));
+    width: min(calc(100% - 14px), var(--container));
   }
 
   .hero-section {
@@ -2005,7 +2005,7 @@ img {
 
 @media (max-width: 480px) {
   .container {
-    width: min(calc(100% - 20px), var(--container));
+    width: min(calc(100% - 10px), var(--container));
   }
 
   .section-heading {
@@ -2076,7 +2076,7 @@ img {
 
 @media (max-width: 390px) {
   .container {
-    width: min(calc(100% - 16px), var(--container));
+    width: min(calc(100% - 8px), var(--container));
   }
 
   .hero-photo-card {
