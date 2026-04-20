@@ -1945,14 +1945,27 @@ img {
 
   .contact-actions,
   .hero-actions {
-    flex-direction: column;
+    flex-direction: row;
     align-items: stretch;
+    justify-content: center;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions > .button {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
   }
 
   .hero-social-links {
+    flex: 0 0 100%;
     align-self: stretch;
     width: 100%;
     gap: 0.5rem;
+    justify-content: center;
   }
 
   .hero-social-links .button-social {
@@ -1981,7 +1994,7 @@ img {
   }
 
   .button {
-    width: 100%;
+    width: auto;
   }
 
   .footer nav {
