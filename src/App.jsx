@@ -2,6 +2,23 @@ import { useState, useEffect, useRef } from 'react'
 
 const CREDENTIAL_TRANSITION_MS = 850
 
+const withBasePath = (path) => {
+  if (!path) {
+    return path
+  }
+
+  // Keep absolute and non-http links unchanged.
+  if (/^(?:[a-z]+:)?\/\//i.test(path) || path.startsWith('mailto:') || path.startsWith('#')) {
+    return path
+  }
+
+  if (path.startsWith('/')) {
+    return `${import.meta.env.BASE_URL}${path.slice(1)}`
+  }
+
+  return path
+}
+
 const credentialSlides = [
   {
     logo: '/assets/google_pm.jpg',
@@ -386,7 +403,7 @@ function App() {
               </a>
               <a
                 className="button button-secondary"
-                href="/Md.AbuHanifSiam_CV.pdf"
+                href={withBasePath('/Md.AbuHanifSiam_CV.pdf')}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -400,7 +417,7 @@ function App() {
                   rel="noreferrer"
                   aria-label="Open LinkedIn"
                 >
-                  <img src="/assets/linkedin.png" alt="LinkedIn" />
+                  <img src={withBasePath('/assets/linkedin.png')} alt="LinkedIn" />
                 </a>
                 <a
                   className="button button-secondary button-social"
@@ -409,7 +426,7 @@ function App() {
                   rel="noreferrer"
                   aria-label="Open GitHub"
                 >
-                  <img src="/assets/github.png" alt="GitHub" />
+                  <img src={withBasePath('/assets/github.png')} alt="GitHub" />
                 </a>
               </div>
             </div>
@@ -422,7 +439,7 @@ function App() {
             <img
               key={heroPhotoIndex}
               className="hero-photo hero-photo-popout"
-              src={heroPhotos[heroPhotoIndex]}
+              src={withBasePath(heroPhotos[heroPhotoIndex])}
               alt="Md. Abu Hanif Siam portrait"
             />
             <div className="hero-photo-glow" />
@@ -475,7 +492,7 @@ function App() {
                   <div className="featured-credential-media">
                     {'logo' in featuredCredential ? (
                       <img
-                        src={featuredCredential.logo}
+                        src={withBasePath(featuredCredential.logo)}
                         alt={featuredCredential.alt ?? featuredCredential.title}
                       />
                     ) : null}
@@ -502,7 +519,7 @@ function App() {
                     <div className="featured-credential-media">
                       {'logo' in miniCredentials[0] ? (
                         <img
-                          src={miniCredentials[0].logo}
+                          src={withBasePath(miniCredentials[0].logo)}
                           alt={miniCredentials[0].alt ?? miniCredentials[0].title}
                         />
                       ) : null}
@@ -536,7 +553,7 @@ function App() {
                   >
                     <div className="credential-mini-row">
                       {'logo' in item ? (
-                        <img className="credential-mini-logo" src={item.logo} alt="" />
+                        <img className="credential-mini-logo" src={withBasePath(item.logo)} alt="" />
                       ) : null}
                       <div className="credential-mini-copy">
                         <h3>{item.title}</h3>
@@ -553,7 +570,7 @@ function App() {
                   <article className="credential-mini glass-card credential-mini-incoming" key={`incoming-${incomingMiniCredential.title}`}>
                     <div className="credential-mini-row">
                       {'logo' in incomingMiniCredential ? (
-                        <img className="credential-mini-logo" src={incomingMiniCredential.logo} alt="" />
+                        <img className="credential-mini-logo" src={withBasePath(incomingMiniCredential.logo)} alt="" />
                       ) : null}
                       <div className="credential-mini-copy">
                         <h3>{incomingMiniCredential.title}</h3>
@@ -655,7 +672,7 @@ function App() {
             {projects.map((project) => (
               <article className="project-card" key={project.title}>
                 <div className="project-image-wrap">
-                  <img src={project.image} alt={project.title} />
+                  <img src={withBasePath(project.image)} alt={project.title} />
                 </div>
                 <div className="project-content">
                   <div className="project-header">
@@ -701,7 +718,7 @@ function App() {
                   <div className="skill-chip-grid">
                     {card.items.map((item) => (
                       <div className="skill-chip" key={item.label}>
-                        <img src={item.logo} alt="" />
+                        <img src={withBasePath(item.logo)} alt="" />
                         <span>{item.label}</span>
                       </div>
                     ))}
@@ -711,7 +728,7 @@ function App() {
                     {card.items.map((item) => (
                       <div className="system-list-item" key={item.label}>
                         <div className="system-list-left">
-                          <img src={item.logo} alt="" />
+                          <img src={withBasePath(item.logo)} alt="" />
                           <span>{item.label}</span>
                         </div>
                         <span className="system-list-dot" aria-hidden="true" />
@@ -750,7 +767,7 @@ function App() {
               <article className="education-card-left">
                 <div className="education-main-row">
                   <div className="education-icon">
-                    <img src="/assets/bracu_logo.png" alt="BRAC University logo" />
+                    <img src={withBasePath('/assets/bracu_logo.png')} alt="BRAC University logo" />
                   </div>
                   <div className="education-institution">
                     <h3>{education.institution}</h3>
@@ -826,7 +843,7 @@ function App() {
               <article className="leadership-card" key={item.title}>
                 <div className="leadership-card-head">
                   <div className="leadership-icon" aria-hidden="true">
-                    <img src={item.logo} alt={item.logoAlt} />
+                    <img src={withBasePath(item.logo)} alt={item.logoAlt} />
                   </div>
                   <span className="leadership-role-tag">{item.roleTag}</span>
                 </div>
@@ -916,7 +933,7 @@ function App() {
             <a href="https://github.com/AbuHanifSiam" target="_blank" rel="noreferrer">
               GitHub
             </a>
-            <a href="/Md.AbuHanifSiam_CV.pdf" target="_blank" rel="noreferrer">
+            <a href={withBasePath('/Md.AbuHanifSiam_CV.pdf')} target="_blank" rel="noreferrer">
               Resume
             </a>
           </nav>
