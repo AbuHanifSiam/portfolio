@@ -95,11 +95,15 @@ img {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(300px, 478px);
+  grid-template-areas:
+    'copy photo'
+    'actions photo';
   align-items: center;
   gap: 3rem;
 }
 
 .hero-copy {
+  grid-area: copy;
   max-width: min(100%, 43rem);
 }
 
@@ -447,6 +451,10 @@ img {
   line-height: 1.55;
 }
 
+.hero-actions {
+  grid-area: actions;
+}
+
 .hero-actions,
 .contact-actions {
   display: flex;
@@ -519,6 +527,7 @@ img {
 }
 
 .hero-photo-card {
+  grid-area: photo;
   position: relative;
   justify-self: end;
   width: min(100%, 380px);
@@ -1666,12 +1675,20 @@ img {
     padding: 6rem 0;
   }
 
-  .hero-grid,
   .credentials-grid,
   .timeline-grid,
   .contact-grid,
   .recognition-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(210px, 0.85fr);
+    grid-template-areas:
+      'copy photo'
+      'actions actions';
+    align-items: end;
+    gap: 1.8rem 1.25rem;
   }
 
   .projects-grid {
@@ -1684,8 +1701,9 @@ img {
   }
 
   .hero-photo-card {
-    justify-self: center;
-    min-height: 25rem;
+    justify-self: end;
+    width: min(100%, 320px);
+    min-height: 21rem;
   }
 
   .hero-copy {
@@ -1759,7 +1777,12 @@ img {
   }
 
   .hero-grid {
-    gap: 2rem;
+    grid-template-columns: minmax(0, 1fr) minmax(132px, 40vw);
+    grid-template-areas:
+      'copy photo'
+      'actions actions';
+    align-items: start;
+    gap: 1.15rem 0.9rem;
   }
 
   .hero-intro {
@@ -1778,18 +1801,18 @@ img {
   }
 
   .hero-photo-card {
-    width: min(100%, 340px);
-    min-height: 22rem;
-    justify-self: center;
+    width: clamp(148px, 36vw, 220px);
+    min-height: clamp(13rem, 32vw, 16rem);
+    justify-self: end;
   }
 
   .hero-photo-frame {
-    height: 18rem;
-    border-width: 7px;
+    height: clamp(11.5rem, 30vw, 14rem);
+    border-width: 6px;
   }
 
   .hero-photo-popout {
-    width: 110%;
+    width: 112%;
   }
 
   .timeline-intro h2 {
@@ -1944,7 +1967,8 @@ img {
   }
 
   .hero-photo-card {
-    min-height: 20rem;
+    width: clamp(128px, 39vw, 180px);
+    min-height: clamp(10.75rem, 33vw, 13rem);
   }
 
   .hero-intro {
@@ -1958,7 +1982,7 @@ img {
   }
 
   .hero-photo-frame {
-    height: 16.5rem;
+    height: clamp(9.9rem, 31vw, 11.3rem);
   }
 
   .contact-feature h3 {
@@ -2004,11 +2028,12 @@ img {
   }
 
   .hero-photo-card {
-    min-height: 18.5rem;
+    width: clamp(116px, 38vw, 160px);
+    min-height: clamp(9.5rem, 31vw, 11rem);
   }
 
   .hero-photo-frame {
-    height: 15.25rem;
+    height: clamp(8.9rem, 29vw, 10.5rem);
   }
 
   .hero-photo-popout {

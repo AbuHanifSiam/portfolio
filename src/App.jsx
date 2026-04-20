@@ -397,39 +397,6 @@ function App() {
               digital applications and driving operational excellence through
               agile methodologies and technical precision.
             </p>
-            <div className="hero-actions">
-              <a className="button button-primary" href="#projects">
-                Explore Work
-              </a>
-              <a
-                className="button button-secondary"
-                href={withBasePath('/Md.AbuHanifSiam_CV.pdf')}
-                target="_blank"
-                rel="noreferrer"
-              >
-                View Resume
-              </a>
-              <div className="hero-social-links" aria-label="Social links">
-                <a
-                  className="button button-secondary button-social"
-                  href="https://www.linkedin.com/in/ahsiam11"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Open LinkedIn"
-                >
-                  <img src={withBasePath('/assets/linkedin.png')} alt="LinkedIn" />
-                </a>
-                <a
-                  className="button button-secondary button-social"
-                  href="https://github.com/AbuHanifSiam"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Open GitHub"
-                >
-                  <img src={withBasePath('/assets/github.png')} alt="GitHub" />
-                </a>
-              </div>
-            </div>
           </div>
 
           <div className="hero-photo-card">
@@ -443,6 +410,40 @@ function App() {
               alt="Md. Abu Hanif Siam portrait"
             />
             <div className="hero-photo-glow" />
+          </div>
+
+          <div className="hero-actions">
+            <a className="button button-primary" href="#projects">
+              Explore Work
+            </a>
+            <a
+              className="button button-secondary"
+              href={withBasePath('/Md.AbuHanifSiam_CV.pdf')}
+              target="_blank"
+              rel="noreferrer"
+            >
+              View Resume
+            </a>
+            <div className="hero-social-links" aria-label="Social links">
+              <a
+                className="button button-secondary button-social"
+                href="https://www.linkedin.com/in/ahsiam11"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Open LinkedIn"
+              >
+                <img src={withBasePath('/assets/linkedin.png')} alt="LinkedIn" />
+              </a>
+              <a
+                className="button button-secondary button-social"
+                href="https://github.com/AbuHanifSiam"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Open GitHub"
+              >
+                <img src={withBasePath('/assets/github.png')} alt="GitHub" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
