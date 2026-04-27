@@ -626,6 +626,7 @@ img {
   left: 50%;
   max-width: none;
   transform: translateX(-50%);
+  border-radius: 0.75rem;
 }
 
 .hero-photo-popout {
