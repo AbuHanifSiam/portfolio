@@ -272,6 +272,51 @@ const leadershipEngagement = [
   },
 ]
 
+const specializedSolutions = [
+  {
+    title: 'Agile Workspace Setup',
+    description:
+      'Organize development chaos by configuring high-velocity Jira or Trello dashboards, standardizing workflows, and setting up sprint planning templates.',
+    icon: 'hierarchy',
+    items: [
+      'Jira/Trello Configuration',
+      'Workflow Customization',
+      'Sprint Reporting Dashboards',
+      'Ceremony Templates',
+    ],
+    buttonText: 'Request Setup',
+    buttonHref: '#contact',
+  },
+  {
+    title: 'Technical Discovery',
+    description:
+      'Translate complex feature ideas into rigorous, developer-ready Software Requirements Specifications (SRS) that engineering teams can execute immediately.',
+    icon: 'document',
+    items: [
+      'ISO 29148 Standard SRS',
+      'Functional Requirements',
+      'Acceptance Criteria Mapping',
+      'Architecture Flowcharts',
+    ],
+    buttonText: 'Start Discovery',
+    buttonHref: '#contact',
+  },
+  {
+    title: 'Project Rescue & Audit',
+    description:
+      'Audit stalled development projects, evaluate legacy codebases, mitigate technical risks, and manage handoffs when transitioning to new teams.',
+    icon: 'audit',
+    items: [
+      'Codebase Health Audit',
+      'Technical Risk Assessment',
+      'Repository Management',
+      'Recovery Sprint Roadmap',
+    ],
+    buttonText: 'Audit My Project',
+    buttonHref: '#contact',
+  },
+]
+
 const contactCards = [
   {
     label: 'LinkedIn',
@@ -384,7 +429,7 @@ function App() {
             <p className="eyebrow hero-intro">
               <span>Hi, I&apos;m</span>
               <br />
-              <span>Md. Abu Hanif Siam</span>
+              <span className="hero-name">Md. Abu Hanif Siam</span>
             </p>
           </div>
 
@@ -409,9 +454,10 @@ function App() {
               </span>
             </h1>
             <p className="lede">
-              Application and IT Services Analyst with experience supporting
-              digital applications and driving operational excellence through
-              agile methodologies and technical precision.
+              I bridge the gap between business requirements and 
+              engineering execution. I specialize in rescuing stalled projects, 
+              writing developer-ready documentation, and configuring 
+              Agile workflows.
             </p>
             <div className="hero-actions">
               <a className="button button-primary" href="#projects">
@@ -860,6 +906,45 @@ function App() {
         </div>
       </section>
 
+      <section className="section specialized-solutions-section">
+        <div className="container">
+          <div className="section-heading specialized-solutions-heading">
+            <p className="overline">Fractional PM Services</p>
+            <h2>Specialized Solutions</h2>
+            <p>
+              Standard-compliant deliverables and operational frameworks tailored for startups,
+              technical founders, and agency owners.
+            </p>
+          </div>
+
+          <div className="solutions-grid">
+            {specializedSolutions.map((solution) => (
+              <article className="solution-card glass-card" key={solution.title}>
+                <div className="solution-icon">
+                  <SolutionIcon type={solution.icon} />
+                </div>
+
+                <h3>{solution.title}</h3>
+                <p className="solution-description">{solution.description}</p>
+
+                <ul className="solution-items">
+                  {solution.items.map((item) => (
+                    <li key={item}>
+                      <span className="solution-dot" aria-hidden="true" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <a href={solution.buttonHref} className="button button-primary solution-button">
+                  {solution.buttonText} <ArrowRightIcon />
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="section contact-section" id="contact">
         <div className="container">
           <div className="section-heading centered">
@@ -1034,6 +1119,52 @@ function CategoryIcon({ type }) {
       />
     </svg>
   )
+}
+
+function SolutionIcon({ type }) {
+  if (type === 'hierarchy') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="7" cy="5" r="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="17" cy="5" r="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="12" cy="14" r="2" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 7v4m10 0v-4M14 16v2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  if (type === 'document') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M6 3h9l5 5v13a2 2 0 01-2 2H8a2 2 0 01-2-2V3zm3 7h6m-6 4h4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  if (type === 'audit') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M10 14l2 2 4-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  return null
 }
 
 function MailIcon() {
