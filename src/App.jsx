@@ -1,6 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 
 const CREDENTIAL_TRANSITION_MS = 850
+const CASE_STUDY_HASH_OPS4 = '#/case-studies/ops4team'
+const CASE_STUDY_HASH_EASYGIG = '#/case-studies/easygig'
+const CASE_STUDY_HASHES = [CASE_STUDY_HASH_OPS4, CASE_STUDY_HASH_EASYGIG]
+
+const getInitialView = () => (CASE_STUDY_HASHES.includes(window.location.hash) ? 'case-study' : 'portfolio')
+
+const getCaseStudyFromHash = () => {
+  if (window.location.hash === CASE_STUDY_HASH_EASYGIG) {
+    return 'easygig'
+  }
+  return 'ops4'
+}
 
 const withBasePath = (path) => {
   if (!path) {
@@ -142,6 +154,7 @@ const projects = [
       'Comprehensive gig management ecosystem streamlining freelancer and client interactions through automated workflows.',
     tags: ['React', 'Node.js', 'Agile PM'],
     href: 'https://easygigjunk.com/',
+    caseStudyHref: CASE_STUDY_HASH_EASYGIG,
   },
   {
     image: '/assets/ops4team.png',
@@ -151,6 +164,7 @@ const projects = [
       'Internal operations tool designed to maximize team productivity through visual project mapping and resource allocation.',
     tags: ['Nest.js', 'mongodb', 'React'],
     href: 'https://ops4.6sensehq.com/',
+    caseStudyHref: CASE_STUDY_HASH_OPS4,
   },
   {
     image: '/assets/6sense-site.png',
@@ -161,6 +175,108 @@ const projects = [
     href: 'https://www.6sensehq.com',
   },
 ]
+
+const ops4CaseStudy = {
+  title: 'Ops4Team Enterprise Hub',
+  eyebrow: 'Featured Case Study',
+  summary:
+    'Architecting a centralized internal operations platform to replace expensive SaaS tools and unify cross-departmental data.',
+  role: 'Technical PM',
+  status: 'Active Production',
+  domain: 'Enterprise ERP',
+  focus: 'Requirements Engineering',
+  challengeParts: [
+    'Management lacked a single source of truth, relying on a fragmented and expensive suite of third-party tools to handle employee time-tracking, project statuses, and HR leave management.',
+    'The objective was to architect a proprietary internal platform from scratch, securely handling complex data from micro-level developer idle-time to macro-level portfolio health for the executive team.',
+  ],
+  impact: [
+    {
+      value: '40+',
+      label: 'Active Daily Users',
+    },
+    {
+      value: '100%',
+      label: 'SaaS Cost Consolidation',
+    },
+    {
+      value: 'Unified Visibility',
+      label: 'Cross-Department Executive Dashboard',
+    },
+  ],
+  execution: [
+    {
+      title: 'Executive Discovery & SRS',
+      copy:
+        'Spearheaded requirements gathering with the CTO and HR leadership. Translated business needs into a developer-ready Software Requirements Specification (SRS).',
+    },
+    {
+      title: 'Complex Logic Facilitation',
+      copy:
+        'Facilitated architectural planning sessions with senior engineers to define complex algorithms for merging desktop tracker data with Jira performance metrics.',
+    },
+    {
+      title: 'Agile Build Orchestration',
+      copy:
+        'Managed the end-to-end execution. Configured Jira workspaces and maintained strict two-week Scrum sprints to keep React and NestJS teams aligned.',
+    },
+    {
+      title: 'Feature Consolidation',
+      copy:
+        'Successfully coordinated the integration of disparate modules, client project dashboards, time-tracking APIs, and HR systems, into a single unified UI.',
+    },
+  ],
+}
+
+const easygigCaseStudy = {
+  title: 'EasyGig Project Rescue',
+  eyebrow: 'Featured Case Study',
+  summary:
+    'Transforming a stalled, buggy codebase into a stable, revenue-generating ecosystem through Agile management.',
+  role: 'Technical PM',
+  status: 'Active Production',
+  domain: 'Marketplace SaaS',
+  focus: 'System Architecture & Integration',
+  challengeParts: [
+    'EasyGig was struggling with high customer bounce rates due to critical live bugs. The platform was handed over mid-flight from a previous team that had initiated multiple features but completed none.',
+    'The immediate priority was stopping the loss of live customers, conducting a full codebase audit, and establishing predictable delivery cadences to replace unstructured Kanban workflows.',
+  ],
+  impact: [
+    {
+      value: '7-10',
+      label: 'Weekly Hauls Booked',
+    },
+    {
+      value: '$150+',
+      label: 'Min Per Haul Value',
+    },
+    {
+      value: '100% Automated',
+      label: 'Weekly Hauler Payroll Rollout',
+    },
+  ],
+  execution: [
+    {
+      title: 'Technical Audit & Triage',
+      copy:
+        'Executed a comprehensive audit of all in-progress features. Shifted engineering focus to isolating and resolving critical live bugs to stabilize the customer experience.',
+    },
+    {
+      title: 'Agile Scrum Implementation',
+      copy:
+        'Migrated the infrastructure from Kanban to Scrum. Restructured the Jira backlog, established strict two-week sprints, and instituted daily standups to regain timeline control.',
+    },
+    {
+      title: 'Design-to-Dev Pipeline',
+      copy:
+        'Implemented a strict gateway where logic changes (driven by live feedback) had to be finalized in design before entering a sprint, eliminating scope creep.',
+    },
+    {
+      title: 'Technical Logic Facilitation',
+      copy:
+        'Mapped out complex logical flows and edge cases with the engineering team, ensuring robust testing protocols were established before deployment.',
+    },
+  ],
+}
 
 const skillCards = [
   {
@@ -338,6 +454,7 @@ const heroPhotos = ['/assets/hero-profile.png', '/assets/hanif.jpg']
 const heroTitles = ['Software Project Manager', 'A Photographer']
 
 function App() {
+  const [view, setView] = useState(getInitialView)
   const [credentialStart, setCredentialStart] = useState(0)
   const [isCredentialCycling, setIsCredentialCycling] = useState(false)
   const credentialCycleTimeoutRef = useRef(null)
@@ -418,6 +535,21 @@ function App() {
 
     return () => clearTimeout(timeout)
   }, [displayedText, heroPhotoIndex])
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setView(CASE_STUDY_HASHES.includes(window.location.hash) ? 'case-study' : 'portfolio')
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  if (view === 'case-study') {
+    const caseStudyType = getCaseStudyFromHash()
+    const caseStudy = caseStudyType === 'easygig' ? easygigCaseStudy : ops4CaseStudy
+    return <CaseStudyPage caseStudy={caseStudy} />
+  }
 
 
   return (
@@ -736,9 +868,16 @@ function App() {
                       </span>
                     ))}
                   </div>
-                  <a href={project.href} target="_blank" rel="noreferrer" className="project-link">
-                    Visit Live Site <ArrowRightIcon />
-                  </a>
+                  <div className="project-links">
+                    <a href={project.href} target="_blank" rel="noreferrer" className="project-link">
+                      Visit Live Site <ArrowRightIcon />
+                    </a>
+                    {project.caseStudyHref ? (
+                      <a href={project.caseStudyHref} className="project-link project-case-study-link">
+                        Case Studies <ArrowRightIcon />
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
               </article>
             ))}
@@ -1031,6 +1170,98 @@ function App() {
   )
 }
 
+function CaseStudyPage({ caseStudy }) {
+  return (
+    <main className="portfolio-shell case-study-shell">
+      <section className="case-study-section">
+        <div className="container case-study-container">
+          <div className="case-study-card glass-card">
+            <div className="case-study-hero">
+              <p className="case-study-eyebrow">
+                <span className="case-study-eyebrow-icon" aria-hidden="true">
+                  <CaseStudyIcon />
+                </span>
+                {caseStudy.eyebrow}
+              </p>
+              <h1>{caseStudy.title}</h1>
+              <p className="case-study-summary">{caseStudy.summary}</p>
+            </div>
+
+            <div className="case-study-badges">
+              <span className="case-study-badge-role">Role: {caseStudy.role}</span>
+              <span className="case-study-badge-status">Status: {caseStudy.status}</span>
+              <span>{caseStudy.domain}</span>
+              <span>{caseStudy.focus}</span>
+            </div>
+
+            <div className="case-study-grid">
+              <div className="case-study-left">
+                <article className="case-study-challenge">
+                  <div className="case-study-panel-title">
+                    <div className="case-study-panel-icon case-study-panel-icon-challenge">
+                      <TargetIcon />
+                    </div>
+                    <h2>The Challenge</h2>
+                  </div>
+                  <div className="case-study-challenge-copy">
+                    {caseStudy.challengeParts.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
+                </article>
+
+                <article className="case-study-panel glass-card case-study-impact-panel">
+                  <div className="case-study-panel-title">
+                    <div className="case-study-panel-icon case-study-panel-icon-green">
+                      <ImpactIcon />
+                    </div>
+                    <h2>Business Impact</h2>
+                  </div>
+
+                  <div className="case-study-metrics">
+                    {caseStudy.impact.map((item) => (
+                      <div className="case-study-metric" key={item.label}>
+                        <strong>{item.value}</strong>
+                        <span>{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="case-study-impact-summary">
+                    <h3>{caseStudy.impactHeading}</h3>
+                    <p>{caseStudy.impactCopy}</p>
+                  </div>
+                </article>
+              </div>
+
+              <div className="case-study-right">
+                <div className="case-study-execution-head">
+                  <div className="case-study-panel-icon case-study-panel-icon-blue">
+                    <GearIcon />
+                  </div>
+                  <h2>Management Execution</h2>
+                </div>
+
+                <div className="case-study-step-list">
+                  {caseStudy.execution.map((step) => (
+                    <article className="case-study-step glass-card" key={step.title}>
+                      <span className="case-study-step-dot" aria-hidden="true" />
+                      <div>
+                        <h3>{step.title}</h3>
+                        <p>{step.copy}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  )
+}
+
 function ArrowSquareIcon() {
   return (
     <svg viewBox="0 0 18 18" aria-hidden="true">
@@ -1042,6 +1273,68 @@ function ArrowSquareIcon() {
         strokeLinejoin="round"
         strokeWidth="1.6"
       />
+    </svg>
+  )
+}
+
+function CaseStudyIcon() {
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        d="M4 4.5h10M4 9h10M4 13.5h7"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  )
+}
+
+function TargetIcon() {
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden="true">
+      <circle cx="9" cy="9" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="9" cy="9" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M9 1.5v2.2M16.5 9h-2.2M9 16.5v-2.2M1.5 9h2.2"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="1.3"
+      />
+    </svg>
+  )
+}
+
+function ImpactIcon() {
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        d="M3 12.5l3.5-3.5 2.2 2.2 5.3-6.2M12.5 5H14.5V7"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+      />
+    </svg>
+  )
+}
+
+function GearIcon() {
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden="true">
+      <path
+        d="M9 4.1v1.2m0 7.4v1.2m4.9-4.9h-1.2M5.3 9H4.1m7.1-3.8-.85.85M6.75 11.95l-.85.85m6.95 0-.85-.85M6.75 6.05l-.85-.85"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.2"
+      />
+      <circle cx="9" cy="9" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.4" />
     </svg>
   )
 }
