@@ -463,9 +463,9 @@ function App() {
   const currentTitle = heroTitles[heroPhotoIndex]
   const credentialOrder = rotateItems(credentialSlides, credentialStart)
   const featuredCredential = credentialOrder[0]
-  const miniCredentials = credentialOrder.slice(1, 4)
-  const incomingMiniCredential = credentialOrder[4]
-  const supportCredentials = credentialOrder.slice(5)
+  const miniCredentials = credentialOrder.slice(1, 5)
+  const incomingMiniCredential = credentialOrder[5]
+  const supportCredentials = credentialOrder.slice(6)
 
   const queueCredentialAdvance = () => {
     if (isCredentialCycling) {
@@ -544,6 +544,14 @@ function App() {
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
+
+  useEffect(() => {
+    if (view !== 'case-study') {
+      return
+    }
+
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+  }, [view])
 
   if (view === 'case-study') {
     const caseStudyType = getCaseStudyFromHash()
