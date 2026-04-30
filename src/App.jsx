@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-const CREDENTIAL_TRANSITION_MS = 850
+const CREDENTIAL_TRANSITION_MS = 700
 const CASE_STUDY_HASH_OPS4 = '#/case-studies/ops4team'
 const CASE_STUDY_HASH_EASYGIG = '#/case-studies/easygig'
 const CASE_STUDY_HASHES = [CASE_STUDY_HASH_OPS4, CASE_STUDY_HASH_EASYGIG]
@@ -457,37 +457,59 @@ function App() {
   const [view, setView] = useState(getInitialView)
   const [credentialStart, setCredentialStart] = useState(0)
   const [isCredentialCycling, setIsCredentialCycling] = useState(false)
+  const [credentialAdvanceDirection, setCredentialAdvanceDirection] = useState(null)
   const credentialCycleTimeoutRef = useRef(null)
+  const credentialSidebarRef = useRef(null)
   const [heroPhotoIndex, setHeroPhotoIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState('')
   const currentTitle = heroTitles[heroPhotoIndex]
   const credentialOrder = rotateItems(credentialSlides, credentialStart)
   const featuredCredential = credentialOrder[0]
-  const miniCredentials = credentialOrder.slice(1, 5)
-  const incomingMiniCredential = credentialOrder[5]
-  const supportCredentials = credentialOrder.slice(6)
+  // Show 3 mini cards on the right; keep one incoming card for smooth scroll
+  const miniCredentials = credentialOrder.slice(1, 4)
+  const incomingMiniCredential = credentialOrder[4]
+  const supportCredentials = credentialOrder.slice(5)
 
-  const queueCredentialAdvance = () => {
+  const handleCredentialAnimationComplete = () => {
+    setCredentialStart((current) => {
+      if (credentialAdvanceDirection === 'left') {
+        return (current - 1 + credentialSlides.length) % credentialSlides.length
+      }
+
+      return (current + 1) % credentialSlides.length
+    })
+    setIsCredentialCycling(false)
+    setCredentialAdvanceDirection(null)
+    
+    // Reset transform for next cycle
+    if (credentialSidebarRef.current) {
+      credentialSidebarRef.current.style.transform = 'translateY(0)'
+    }
+  }
+
+  const queueCredentialAdvance = (direction, isManual = false) => {
     if (isCredentialCycling) {
       return
     }
 
     setIsCredentialCycling(true)
-
-    credentialCycleTimeoutRef.current = window.setTimeout(() => {
-      setCredentialStart((current) => (current + 1) % credentialSlides.length)
-      setIsCredentialCycling(false)
-      credentialCycleTimeoutRef.current = null
-    }, CREDENTIAL_TRANSITION_MS)
+    if (isManual) {
+      setCredentialAdvanceDirection(direction)
+    }
   }
 
-  const rotateCredentials = (direction) => {
+  const rotateCredentials = (direction, isManual = false) => {
     if (direction === 'right') {
-      queueCredentialAdvance()
+      queueCredentialAdvance(direction, isManual)
       return
     }
 
     if (isCredentialCycling) {
+      return
+    }
+
+    if (isManual) {
+      queueCredentialAdvance(direction, true)
       return
     }
 
@@ -501,6 +523,39 @@ function App() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    // Calculate the height of one card + gap for proper animation distance
+    if (credentialSidebarRef.current && isCredentialCycling) {
+      const firstCard = credentialSidebarRef.current.querySelector('.credential-mini')
+      if (firstCard) {
+        const cardHeight = firstCard.offsetHeight
+        const gap = 16 // 1rem = 16px
+        const translateDistance = -(cardHeight + gap)
+        credentialSidebarRef.current.style.setProperty('--card-translate-distance', `${translateDistance}px`)
+      }
+    }
+  }, [isCredentialCycling])
+
+  useEffect(() => {
+    // Handle auto-rotation completion (no animation)
+    if (isCredentialCycling && !credentialAdvanceDirection) {
+      if (credentialCycleTimeoutRef.current) {
+        window.clearTimeout(credentialCycleTimeoutRef.current)
+      }
+      
+      credentialCycleTimeoutRef.current = window.setTimeout(() => {
+        setCredentialStart((current) => (current + 1) % credentialSlides.length)
+        setIsCredentialCycling(false)
+      }, 50)
+    }
+
+    return () => {
+      if (credentialCycleTimeoutRef.current) {
+        window.clearTimeout(credentialCycleTimeoutRef.current)
+      }
+    }
+  }, [isCredentialCycling, credentialAdvanceDirection])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -655,7 +710,7 @@ function App() {
                 className="carousel-button"
                 aria-label="Show previous credential"
                 disabled={isCredentialCycling}
-                onClick={() => rotateCredentials('left')}
+                onClick={() => rotateCredentials('left', true)}
               >
                 <CarouselArrowIcon direction="left" />
               </button>
@@ -664,7 +719,7 @@ function App() {
                 className="carousel-button"
                 aria-label="Show next credential"
                 disabled={isCredentialCycling}
-                onClick={() => rotateCredentials('right')}
+                onClick={() => rotateCredentials('right', true)}
               >
                 <CarouselArrowIcon direction="right" />
               </button>
@@ -672,12 +727,7 @@ function App() {
 
             <div className="credentials-grid">
               <div className="featured-credential-stage">
-                <article
-                  key={featuredCredential.title}
-                  className={`featured-credential glass-card ${
-                    isCredentialCycling ? 'featured-credential-leaving' : ''
-                  }`}
-                >
+                <article key={featuredCredential.title} className="featured-credential glass-card">
                   <div className="featured-credential-media">
                     {'logo' in featuredCredential ? (
                       <img
@@ -703,41 +753,16 @@ function App() {
                   </div>
                 </article>
 
-                {isCredentialCycling ? (
-                  <article className="featured-credential glass-card featured-credential-promoting" aria-hidden="true">
-                    <div className="featured-credential-media">
-                      {'logo' in miniCredentials[0] ? (
-                        <img
-                          src={withBasePath(miniCredentials[0].logo)}
-                          alt={miniCredentials[0].alt ?? miniCredentials[0].title}
-                        />
-                      ) : null}
-                    </div>
-                    <div className="featured-credential-copy">
-                      <p className="pill">{miniCredentials[0].subtitle}</p>
-                      <h3>{miniCredentials[0].title}</h3>
-                      <p>{miniCredentials[0].description}</p>
-                      <div className="credential-stats">
-                        <div>
-                          <span>Issuer</span>
-                          <strong>{miniCredentials[0].issuer}</strong>
-                        </div>
-                        <div>
-                          <span>Issued</span>
-                          <strong>{miniCredentials[0].issued}</strong>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                ) : null}
               </div>
 
-              <div className={`credential-sidebar ${isCredentialCycling ? 'credential-sidebar-cycling' : ''}`}>
+              <div 
+                ref={credentialSidebarRef}
+                className={`credential-sidebar ${credentialAdvanceDirection ? 'credential-sidebar-cycling' : ''}`}
+                onAnimationEnd={handleCredentialAnimationComplete}
+              >
                 {miniCredentials.map((item, index) => (
                   <article
-                    className={`credential-mini glass-card ${
-                      isCredentialCycling ? `credential-mini-slot-${index + 1}` : ''
-                    }`}
+                    className="credential-mini glass-card"
                     key={item.title}
                   >
                     <div className="credential-mini-row">
@@ -755,22 +780,22 @@ function App() {
                   </article>
                 ))}
 
-                {isCredentialCycling && incomingMiniCredential ? (
-                  <article className="credential-mini glass-card credential-mini-incoming" key={`incoming-${incomingMiniCredential.title}`}>
-                    <div className="credential-mini-row">
-                      {'logo' in incomingMiniCredential ? (
-                        <img className="credential-mini-logo" src={withBasePath(incomingMiniCredential.logo)} alt="" />
-                      ) : null}
-                      <div className="credential-mini-copy">
-                        <h3>{incomingMiniCredential.title}</h3>
-                        {'subtitle' in incomingMiniCredential ? <p>{incomingMiniCredential.subtitle}</p> : null}
-                      </div>
-                      <div className="credential-mini-arrow" aria-hidden="true">
-                        <ArrowSquareIcon />
-                      </div>
-                    </div>
-                  </article>
-                ) : null}
+                              {incomingMiniCredential ? (
+                                <article className="credential-mini glass-card" key={`incoming-${incomingMiniCredential.title}`}>
+                                  <div className="credential-mini-row">
+                                    {'logo' in incomingMiniCredential ? (
+                                      <img className="credential-mini-logo" src={withBasePath(incomingMiniCredential.logo)} alt="" />
+                                    ) : null}
+                                    <div className="credential-mini-copy">
+                                      <h3>{incomingMiniCredential.title}</h3>
+                                      {'subtitle' in incomingMiniCredential ? <p>{incomingMiniCredential.subtitle}</p> : null}
+                                    </div>
+                                    <div className="credential-mini-arrow" aria-hidden="true">
+                                      <ArrowSquareIcon />
+                                    </div>
+                                  </div>
+                                </article>
+                              ) : null}
               </div>
             </div>
 
