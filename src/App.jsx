@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 const CREDENTIAL_TRANSITION_MS = 700
 const CASE_STUDY_HASH_OPS4 = '#/case-studies/ops4team'
@@ -462,7 +462,6 @@ function App() {
   const credentialSidebarRef = useRef(null)
   const [heroPhotoIndex, setHeroPhotoIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState('')
-  const currentTitle = heroTitles[heroPhotoIndex]
   const credentialOrder = rotateItems(credentialSlides, credentialStart)
   const featuredCredential = credentialOrder[0]
   // Show 3 mini cards on the right; keep one incoming card for smooth scroll
@@ -487,7 +486,7 @@ function App() {
     }
   }
 
-  const queueCredentialAdvance = (direction, isManual = false) => {
+  const queueCredentialAdvance = useCallback((direction, isManual = false) => {
     if (isCredentialCycling) {
       return
     }
@@ -496,9 +495,9 @@ function App() {
     if (isManual) {
       setCredentialAdvanceDirection(direction)
     }
-  }
+  }, [isCredentialCycling])
 
-  const rotateCredentials = (direction, isManual = false) => {
+  const rotateCredentials = useCallback((direction, isManual = false) => {
     if (direction === 'right') {
       queueCredentialAdvance(direction, isManual)
       return
@@ -514,7 +513,7 @@ function App() {
     }
 
     setCredentialStart((current) => (current - 1 + credentialSlides.length) % credentialSlides.length)
-  }
+  }, [isCredentialCycling, queueCredentialAdvance])
 
   useEffect(() => {
     return () => {
@@ -563,7 +562,7 @@ function App() {
     }, 10000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [rotateCredentials])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -571,10 +570,14 @@ function App() {
     }, 20000)
 
     return () => clearInterval(interval)
-  }, [heroPhotos.length])
+  }, [])
 
   useEffect(() => {
-    setDisplayedText('')
+    const timeout = window.setTimeout(() => {
+      setDisplayedText('')
+    }, 0)
+
+    return () => window.clearTimeout(timeout)
   }, [heroPhotoIndex])
 
   useEffect(() => {
@@ -760,7 +763,7 @@ function App() {
                 className={`credential-sidebar ${credentialAdvanceDirection ? 'credential-sidebar-cycling' : ''}`}
                 onAnimationEnd={handleCredentialAnimationComplete}
               >
-                {miniCredentials.map((item, index) => (
+                {miniCredentials.map((item) => (
                   <article
                     className="credential-mini glass-card"
                     key={item.title}
