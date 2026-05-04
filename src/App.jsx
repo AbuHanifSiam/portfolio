@@ -632,9 +632,6 @@ function App() {
           </div>
 
           <div className="hero-photo-card">
-            <div className="hero-photo-frame" aria-hidden="true">
-              <div className="hero-photo-plate" />
-            </div>
             <img
               key={heroPhotoIndex}
               className="hero-photo hero-photo-popout"
