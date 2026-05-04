@@ -459,24 +459,48 @@ function App() {
   const [isCredentialCycling, setIsCredentialCycling] = useState(false)
   const [credentialAdvanceDirection, setCredentialAdvanceDirection] = useState(null)
   const credentialCycleTimeoutRef = useRef(null)
+  const featuredCredentialTimeoutRef = useRef(null)
   const credentialSidebarRef = useRef(null)
   const [heroPhotoIndex, setHeroPhotoIndex] = useState(0)
   const [displayedText, setDisplayedText] = useState('')
+  const [displayedFeaturedCredential, setDisplayedFeaturedCredential] = useState(credentialSlides[0])
+  const [previousFeaturedCredential, setPreviousFeaturedCredential] = useState(null)
+  const [isFeaturedCredentialTransitioning, setIsFeaturedCredentialTransitioning] = useState(false)
   const credentialOrder = rotateItems(credentialSlides, credentialStart)
-  const featuredCredential = credentialOrder[0]
   // Show 3 mini cards on the right; keep one incoming card for smooth scroll
   const miniCredentials = credentialOrder.slice(1, 4)
   const incomingMiniCredential = credentialOrder[4]
   const supportCredentials = credentialOrder.slice(5)
 
-  const handleCredentialAnimationComplete = () => {
-    setCredentialStart((current) => {
-      if (credentialAdvanceDirection === 'left') {
-        return (current - 1 + credentialSlides.length) % credentialSlides.length
-      }
+  const commitCredentialStart = useCallback((nextStart) => {
+    const nextFeaturedCredential = credentialSlides[nextStart]
 
-      return (current + 1) % credentialSlides.length
-    })
+    if (nextFeaturedCredential === displayedFeaturedCredential) {
+      setCredentialStart(nextStart)
+      return
+    }
+
+    if (featuredCredentialTimeoutRef.current) {
+      window.clearTimeout(featuredCredentialTimeoutRef.current)
+    }
+
+    setPreviousFeaturedCredential(displayedFeaturedCredential)
+    setDisplayedFeaturedCredential(nextFeaturedCredential)
+    setIsFeaturedCredentialTransitioning(true)
+    setCredentialStart(nextStart)
+
+    featuredCredentialTimeoutRef.current = window.setTimeout(() => {
+      setPreviousFeaturedCredential(null)
+      setIsFeaturedCredentialTransitioning(false)
+    }, CREDENTIAL_TRANSITION_MS)
+  }, [displayedFeaturedCredential])
+
+  const handleCredentialAnimationComplete = () => {
+    const nextStart = credentialAdvanceDirection === 'left'
+      ? (credentialStart - 1 + credentialSlides.length) % credentialSlides.length
+      : (credentialStart + 1) % credentialSlides.length
+
+    commitCredentialStart(nextStart)
     setIsCredentialCycling(false)
     setCredentialAdvanceDirection(null)
     
@@ -499,7 +523,12 @@ function App() {
 
   const rotateCredentials = useCallback((direction, isManual = false) => {
     if (direction === 'right') {
-      queueCredentialAdvance(direction, isManual)
+      // For right direction, directly advance without sidebar animation
+      if (isCredentialCycling) {
+        return
+      }
+      const nextStart = (credentialStart + 1) % credentialSlides.length
+      commitCredentialStart(nextStart)
       return
     }
 
@@ -512,13 +541,17 @@ function App() {
       return
     }
 
-    setCredentialStart((current) => (current - 1 + credentialSlides.length) % credentialSlides.length)
-  }, [isCredentialCycling, queueCredentialAdvance])
+    commitCredentialStart((credentialStart - 1 + credentialSlides.length) % credentialSlides.length)
+  }, [commitCredentialStart, credentialStart, isCredentialCycling, queueCredentialAdvance])
 
   useEffect(() => {
     return () => {
       if (credentialCycleTimeoutRef.current) {
         window.clearTimeout(credentialCycleTimeoutRef.current)
+      }
+
+      if (featuredCredentialTimeoutRef.current) {
+        window.clearTimeout(featuredCredentialTimeoutRef.current)
       }
     }
   }, [])
@@ -544,7 +577,7 @@ function App() {
       }
       
       credentialCycleTimeoutRef.current = window.setTimeout(() => {
-        setCredentialStart((current) => (current + 1) % credentialSlides.length)
+        commitCredentialStart((credentialStart + 1) % credentialSlides.length)
         setIsCredentialCycling(false)
       }, 50)
     }
@@ -554,15 +587,7 @@ function App() {
         window.clearTimeout(credentialCycleTimeoutRef.current)
       }
     }
-  }, [isCredentialCycling, credentialAdvanceDirection])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      rotateCredentials('right')
-    }, 10000)
-
-    return () => clearInterval(interval)
-  }, [rotateCredentials])
+  }, [commitCredentialStart, credentialAdvanceDirection, credentialStart, isCredentialCycling])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -727,31 +752,93 @@ function App() {
 
             <div className="credentials-grid">
               <div className="featured-credential-stage">
-                <article key={featuredCredential.title} className="featured-credential glass-card">
-                  <div className="featured-credential-media">
-                    {'logo' in featuredCredential ? (
-                      <img
-                        src={withBasePath(featuredCredential.logo)}
-                        alt={featuredCredential.alt ?? featuredCredential.title}
-                      />
-                    ) : null}
-                  </div>
-                  <div className="featured-credential-copy">
-                    <p className="pill">{featuredCredential.subtitle}</p>
-                    <h3>{featuredCredential.title}</h3>
-                    <p>{featuredCredential.description}</p>
-                    <div className="credential-stats">
-                      <div>
-                        <span>Issuer</span>
-                        <strong>{featuredCredential.issuer}</strong>
+                {isFeaturedCredentialTransitioning && previousFeaturedCredential ? (
+                  <>
+                    <article
+                      key={`leaving-${previousFeaturedCredential.title}`}
+                      className="featured-credential glass-card featured-credential-transition featured-credential-leaving"
+                    >
+                      <div className="featured-credential-media">
+                        {'logo' in previousFeaturedCredential ? (
+                          <img
+                            src={withBasePath(previousFeaturedCredential.logo)}
+                            alt={previousFeaturedCredential.alt ?? previousFeaturedCredential.title}
+                          />
+                        ) : null}
                       </div>
-                      <div>
-                        <span>Issued</span>
-                        <strong>{featuredCredential.issued}</strong>
+                      <div className="featured-credential-copy">
+                        <p className="pill">{previousFeaturedCredential.subtitle}</p>
+                        <h3>{previousFeaturedCredential.title}</h3>
+                        <p>{previousFeaturedCredential.description}</p>
+                        <div className="credential-stats">
+                          <div>
+                            <span>Issuer</span>
+                            <strong>{previousFeaturedCredential.issuer}</strong>
+                          </div>
+                          <div>
+                            <span>Issued</span>
+                            <strong>{previousFeaturedCredential.issued}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article
+                      key={`entering-${displayedFeaturedCredential.title}`}
+                      className="featured-credential glass-card featured-credential-transition featured-credential-promoting"
+                    >
+                      <div className="featured-credential-media">
+                        {'logo' in displayedFeaturedCredential ? (
+                          <img
+                            src={withBasePath(displayedFeaturedCredential.logo)}
+                            alt={displayedFeaturedCredential.alt ?? displayedFeaturedCredential.title}
+                          />
+                        ) : null}
+                      </div>
+                      <div className="featured-credential-copy">
+                        <p className="pill">{displayedFeaturedCredential.subtitle}</p>
+                        <h3>{displayedFeaturedCredential.title}</h3>
+                        <p>{displayedFeaturedCredential.description}</p>
+                        <div className="credential-stats">
+                          <div>
+                            <span>Issuer</span>
+                            <strong>{displayedFeaturedCredential.issuer}</strong>
+                          </div>
+                          <div>
+                            <span>Issued</span>
+                            <strong>{displayedFeaturedCredential.issued}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </>
+                ) : (
+                  <article key={displayedFeaturedCredential.title} className="featured-credential glass-card">
+                    <div className="featured-credential-media">
+                      {'logo' in displayedFeaturedCredential ? (
+                        <img
+                          src={withBasePath(displayedFeaturedCredential.logo)}
+                          alt={displayedFeaturedCredential.alt ?? displayedFeaturedCredential.title}
+                        />
+                      ) : null}
+                    </div>
+                    <div className="featured-credential-copy">
+                      <p className="pill">{displayedFeaturedCredential.subtitle}</p>
+                      <h3>{displayedFeaturedCredential.title}</h3>
+                      <p>{displayedFeaturedCredential.description}</p>
+                      <div className="credential-stats">
+                        <div>
+                          <span>Issuer</span>
+                          <strong>{displayedFeaturedCredential.issuer}</strong>
+                        </div>
+                        <div>
+                          <span>Issued</span>
+                          <strong>{displayedFeaturedCredential.issued}</strong>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </article>
+                  </article>
+                )}
 
               </div>
 
@@ -811,7 +898,7 @@ function App() {
                       return
                     }
 
-                    setCredentialStart(index)
+                    commitCredentialStart(index)
                   }}
                 />
               ))}
