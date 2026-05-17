@@ -433,25 +433,9 @@ const specializedSolutions = [
   },
 ]
 
-const contactCards = [
-  {
-    label: 'LinkedIn',
-    value: 'linkedin.com/in/ahsiam11',
-    copy: 'Professional profile and career updates.',
-    href: 'https://www.linkedin.com/in/ahsiam11',
-    icon: 'in',
-  },
-  {
-    label: 'GitHub',
-    value: 'github.com/AbuHanifSiam',
-    copy: 'Projects, reports, and technical work samples.',
-    href: 'https://github.com/AbuHanifSiam',
-    icon: 'gh',
-  },
-]
-
 const heroPhotos = ['/assets/hero-profile.png', '/assets/hanif.jpg']
 const heroTitles = ['Software Project Manager', 'A Photographer']
+const calendlyMeetingUrl = 'https://calendly.com/mdabuhanifsiam/30min'
 
 function App() {
   const [view, setView] = useState(getInitialView)
@@ -462,6 +446,7 @@ function App() {
   const featuredCredentialTimeoutRef = useRef(null)
   const credentialSidebarRef = useRef(null)
   const [heroPhotoIndex, setHeroPhotoIndex] = useState(0)
+  const calendlyWidgetRef = useRef(null)
   const [displayedText, setDisplayedText] = useState('')
   const [displayedFeaturedCredential, setDisplayedFeaturedCredential] = useState(credentialSlides[0])
   const [previousFeaturedCredential, setPreviousFeaturedCredential] = useState(null)
@@ -604,6 +589,49 @@ function App() {
 
     return () => window.clearTimeout(timeout)
   }, [heroPhotoIndex])
+
+  useEffect(() => {
+    const widgetElement = calendlyWidgetRef.current
+
+    if (!widgetElement) {
+      return undefined
+    }
+
+    const mountCalendly = () => {
+      if (!widgetElement || !window.Calendly?.initInlineWidget) {
+        return
+      }
+
+      widgetElement.innerHTML = ''
+      window.Calendly.initInlineWidget({
+        url: calendlyMeetingUrl,
+        parentElement: widgetElement,
+      })
+    }
+
+    if (window.Calendly?.initInlineWidget) {
+      mountCalendly()
+      return undefined
+    }
+
+    const existingScript = document.querySelector('script[data-calendly-widget="true"]')
+
+    if (existingScript) {
+      existingScript.addEventListener('load', mountCalendly, { once: true })
+      return () => existingScript.removeEventListener('load', mountCalendly)
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://assets.calendly.com/assets/external/widget.js'
+    script.async = true
+    script.dataset.calendlyWidget = 'true'
+    script.onload = mountCalendly
+    document.body.appendChild(script)
+
+    return () => {
+      script.onload = null
+    }
+  }, [])
 
   useEffect(() => {
     let timeout
@@ -1215,54 +1243,27 @@ function App() {
 
           <div className="contact-grid">
             <article className="contact-feature glass-card">
-              <div className="contact-feature-icon">
-                <MailIcon />
+              <div className="contact-feature-header">
+                <div className="contact-feature-icon">
+                  <MailIcon />
+                </div>
+                <div>
+                  <p className="contact-label">Calendly</p>
+                  <h3>Choose a time and book the meeting directly.</h3>
+                  <p>
+                    Use the embedded scheduler below to request a meeting
+                    without leaving the page.
+                  </p>
+                </div>
               </div>
-              <h3>
-                Let&apos;s connect around application delivery, project
-                coordination, and service-focused technical work.
-              </h3>
-              <p>
-                Reach out for professional opportunities, project discussions,
-                or conversations around application support, service
-                performance, and cross-functional delivery.
-              </p>
-              <div className="contact-actions">
-                <a
-                  className="button button-primary"
-                  href="mailto:hanif.siam@6sensehq.com"
-                >
-                  Email Md. Abu Hanif Siam
-                </a>
-                <a
-                  className="button button-tertiary"
-                  href="https://www.linkedin.com/in/ahsiam11"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open LinkedIn
-                </a>
+              <div className="contact-calendly-shell">
+                <div
+                  ref={calendlyWidgetRef}
+                  className="calendly-inline-widget contact-calendly-widget"
+                  data-url={calendlyMeetingUrl}
+                />
               </div>
             </article>
-
-            <div className="contact-sidecards">
-              {contactCards.map((item) => (
-                <a
-                  className="contact-card glass-card"
-                  href={item.href}
-                  key={item.label}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <div className="contact-card-icon">{item.icon}</div>
-                  <div>
-                    <p className="contact-label">{item.label}</p>
-                    <h3>{item.value}</h3>
-                    <p className="contact-copy">{item.copy}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
           </div>
         </div>
       </section>
